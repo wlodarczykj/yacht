@@ -1461,103 +1461,41 @@ window.addEventListener('click', function (event) {
 }, false);
   })();
 });
-require.register("Projects/yacht/web/static/js/socket.js", function(exports, require, module) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _phoenix = require("phoenix");
-
-var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
-
-// When you connect, you'll often need to authenticate the client.
-// For example, imagine you have an authentication plug, `MyAuth`,
-// which authenticates the session and assigns a `:current_user`.
-// If the current user exists you can assign the user's token in
-// the connection for use in the layout.
-//
-// In your "web/router.ex":
-//
-//     pipeline :browser do
-//       ...
-//       plug MyAuth
-//       plug :put_user_token
-//     end
-//
-//     defp put_user_token(conn, _) do
-//       if current_user = conn.assigns[:current_user] do
-//         token = Phoenix.Token.sign(conn, "user socket", current_user.id)
-//         assign(conn, :user_token, token)
-//       else
-//         conn
-//       end
-//     end
-//
-// Now you need to pass this token to JavaScript. You can do so
-// inside a script tag in "web/templates/layout/app.html.eex":
-//
-//     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
-//
-// You will need to verify the user token in the "connect/2" function
-// in "web/channels/user_socket.ex":
-//
-//     def connect(%{"token" => token}, socket) do
-//       # max_age: 1209600 is equivalent to two weeks in seconds
-//       case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
-//         {:ok, user_id} ->
-//           {:ok, assign(socket, :user, user_id)}
-//         {:error, reason} ->
-//           :error
-//       end
-//     end
-//
-// Finally, pass the token on connect as below. Or remove it
-// from connect if you don't care about authentication.
-
-// NOTE: The contents of this file will only be executed if
-// you uncomment its entry in "web/static/js/app.js".
-
-// To use Phoenix channels, the first step is to import Socket
-// and connect at the socket path in "lib/my_app/endpoint.ex":
-socket.connect();
-
-// Now that you are connected, you can join channels with a topic:
-var channel = socket.channel("topic:subtopic", {});
-channel.join().receive("ok", function (resp) {
-  console.log("Joined successfully", resp);
-}).receive("error", function (resp) {
-  console.log("Unable to join", resp);
-});
-
-exports.default = socket;
-});
-
-;require.register("web/static/js/app.js", function(exports, require, module) {
+require.register("web/static/js/app.js", function(exports, require, module) {
 "use strict";
 
 require("phoenix_html");
 
-var _socket = require("./socket");
+var _phoenix = require("phoenix");
 
-var _socket2 = _interopRequireDefault(_socket);
+// Initialize Socket.
+var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+//Connect socket.
+socket.connect();
 
-// Brunch automatically concatenates all files in your
-// watched paths. Those paths can be configured at
-// config.paths.watched in "brunch-config.js".
-//
-// However, those files will only be executed if
-// explicitly imported. The only exception are files
-// in vendor, which are never wrapped in imports and
-// therefore are always executed.
+var channel = socket.channel("room:lobby", {});
 
-// Import dependencies
-//
-// If you no longer want to use a dependency, remember
-// to also remove its path from "config.paths.watched".
+channel.join().receive("ok", function (resp) {
+	console.log("Joined successfully", resp);
+}).receive("error", function (resp) {
+	console.log("Unable to join", resp);
+});
+
+// Set up the canvas
+var canvas = document.getElementById("collab-canvas");
+var ctx = canvas.getContext("2d");
+ctx.strokeStyle = "#222222";
+ctx.lineWidth = 2;
+
+window.onload = function () {
+	channel.on("drawLine", function (payload) {
+		ctx.moveTo(payload.from.x, payload.from.y);
+		ctx.lineTo(payload.to.x, payload.to.y);
+		ctx.stroke();
+	});
+};
+
 (function () {
 
 	// Get a regular interval for drawing to the screen
@@ -1566,13 +1504,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			window.setTimeout(callback, 1000 / 60);
 		};
 	}();
-
-	// Set up the canvas
-	var canvas = document.getElementById("collab-canvas");
-	var ctx = canvas.getContext("2d");
-	ctx.strokeStyle = "#222222";
-	ctx.lineWidth = 2;
-
 	// Set up the UI
 	var clearBtn = document.getElementById("clearBtn");
 	clearBtn.addEventListener("click", function (e) {
@@ -1655,6 +1586,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	// Draw to the canvas
 	function renderCanvas() {
 		if (drawing) {
+			if (lastPos.x != mousePos.x || lastPos.y != mousePos.y) {
+				channel.push("drawline", {
+					from: {
+						x: lastPos.x,
+						y: lastPos.y
+					},
+					to: {
+						x: mousePos.x,
+						y: mousePos.y
+					}
+				});
+			}
 			ctx.moveTo(lastPos.x, lastPos.y);
 			ctx.lineTo(mousePos.x, mousePos.y);
 			ctx.stroke();
@@ -1672,84 +1615,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		renderCanvas();
 	})();
 })();
-
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
 });
 
 require.register("web/static/js/socket.js", function(exports, require, module) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _phoenix = require("phoenix");
-
-var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
-
-// When you connect, you'll often need to authenticate the client.
-// For example, imagine you have an authentication plug, `MyAuth`,
-// which authenticates the session and assigns a `:current_user`.
-// If the current user exists you can assign the user's token in
-// the connection for use in the layout.
-//
-// In your "web/router.ex":
-//
-//     pipeline :browser do
-//       ...
-//       plug MyAuth
-//       plug :put_user_token
-//     end
-//
-//     defp put_user_token(conn, _) do
-//       if current_user = conn.assigns[:current_user] do
-//         token = Phoenix.Token.sign(conn, "user socket", current_user.id)
-//         assign(conn, :user_token, token)
-//       else
-//         conn
-//       end
-//     end
-//
-// Now you need to pass this token to JavaScript. You can do so
-// inside a script tag in "web/templates/layout/app.html.eex":
-//
-//     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
-//
-// You will need to verify the user token in the "connect/2" function
-// in "web/channels/user_socket.ex":
-//
-//     def connect(%{"token" => token}, socket) do
-//       # max_age: 1209600 is equivalent to two weeks in seconds
-//       case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
-//         {:ok, user_id} ->
-//           {:ok, assign(socket, :user, user_id)}
-//         {:error, reason} ->
-//           :error
-//       end
-//     end
-//
-// Finally, pass the token on connect as below. Or remove it
-// from connect if you don't care about authentication.
-
 // NOTE: The contents of this file will only be executed if
 // you uncomment its entry in "web/static/js/app.js".
 
 // To use Phoenix channels, the first step is to import Socket
 // and connect at the socket path in "lib/my_app/endpoint.ex":
-socket.connect();
-
-// Now that you are connected, you can join channels with a topic:
-var channel = socket.channel("topic:subtopic", {});
-channel.join().receive("ok", function (resp) {
-  console.log("Joined successfully", resp);
-}).receive("error", function (resp) {
-  console.log("Unable to join", resp);
-});
-
-exports.default = socket;
+"use strict";
 });
 
 ;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");

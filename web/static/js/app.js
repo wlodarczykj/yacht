@@ -1,24 +1,31 @@
-// Brunch automatically concatenates all files in your
-// watched paths. Those paths can be configured at
-// config.paths.watched in "brunch-config.js".
-//
-// However, those files will only be executed if
-// explicitly imported. The only exception are files
-// in vendor, which are never wrapped in imports and
-// therefore are always executed.
-
-// Import dependencies
-//
-// If you no longer want to use a dependency, remember
-// to also remove its path from "config.paths.watched".
 import "phoenix_html"
+import {Socket} from "phoenix"
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
+// Initialize Socket.
+let socket = new Socket("/socket", {params: {token: window.userToken}});
 
-import socket from "./socket"
+//Connect socket.
+socket.connect();
+
+let channel = socket.channel("room:lobby", {});
+
+channel.join()
+  .receive("ok", resp => { console.log("Joined successfully", resp) })
+  .receive("error", resp => { console.log("Unable to join", resp) });
+
+// Set up the canvas
+var canvas = document.getElementById("collab-canvas");
+var ctx = canvas.getContext("2d");
+ctx.strokeStyle = "#222222";
+ctx.lineWidth = 2;
+
+window.onload = function() {
+  channel.on("drawLine", payload => {
+      ctx.moveTo(payload.from.x, payload.from.y);
+      ctx.lineTo(payload.to.x, payload.to.y);
+      ctx.stroke();
+  });
+};
 
 (function() {
 
@@ -33,13 +40,6 @@ import socket from "./socket"
 					 	window.setTimeout(callback, 1000/60);
 					};
 	})();
-
-	// Set up the canvas
-	var canvas = document.getElementById("collab-canvas");
-	var ctx = canvas.getContext("2d");
-	ctx.strokeStyle = "#222222";
-	ctx.lineWidth = 2;
-
 	// Set up the UI
 	var clearBtn = document.getElementById("clearBtn");
 	clearBtn.addEventListener("click", function (e) {
@@ -122,6 +122,19 @@ import socket from "./socket"
 	// Draw to the canvas
 	function renderCanvas() {
 		if (drawing) {
+      if(lastPos.x != mousePos.x || lastPos.y != mousePos.y)
+      {
+        channel.push("drawline", {
+          from : {
+            x : lastPos.x,
+            y : lastPos.y
+          },
+          to : {
+            x : mousePos.x,
+            y : mousePos.y
+          }
+        });
+      }
 			ctx.moveTo(lastPos.x, lastPos.y);
 			ctx.lineTo(mousePos.x, mousePos.y);
 			ctx.stroke();

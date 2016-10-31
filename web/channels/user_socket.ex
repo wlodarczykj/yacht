@@ -2,7 +2,7 @@ defmodule Yacht.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Yacht.RoomChannel
+  channel "room:*", Yacht.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
