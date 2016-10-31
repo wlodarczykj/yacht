@@ -1468,6 +1468,10 @@ require("phoenix_html");
 
 var _phoenix = require("phoenix");
 
+function clearCanvas() {
+	canvas.width = canvas.width;
+}
+
 // Initialize Socket.
 var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
 
@@ -1488,13 +1492,16 @@ var ctx = canvas.getContext("2d");
 ctx.strokeStyle = "#222222";
 ctx.lineWidth = 2;
 
-window.onload = function () {
-	channel.on("drawLine", function (payload) {
-		ctx.moveTo(payload.from.x, payload.from.y);
-		ctx.lineTo(payload.to.x, payload.to.y);
-		ctx.stroke();
-	});
-};
+channel.on("drawline", function (payload) {
+	ctx.moveTo(payload.from.x, payload.from.y);
+	ctx.lineTo(payload.to.x, payload.to.y);
+	ctx.stroke();
+});
+
+channel.on("clear", function (payload) {
+	console.log("Clearing canvas.");
+	clearCanvas();
+});
 
 (function () {
 
@@ -1507,6 +1514,7 @@ window.onload = function () {
 	// Set up the UI
 	var clearBtn = document.getElementById("clearBtn");
 	clearBtn.addEventListener("click", function (e) {
+		channel.push("clear", {});
 		clearCanvas();
 	}, false);
 
@@ -1605,10 +1613,6 @@ window.onload = function () {
 		}
 	}
 
-	function clearCanvas() {
-		canvas.width = canvas.width;
-	}
-
 	// Allow for animation
 	(function drawLoop() {
 		requestAnimFrame(drawLoop);
@@ -1617,16 +1621,7 @@ window.onload = function () {
 })();
 });
 
-require.register("web/static/js/socket.js", function(exports, require, module) {
-// NOTE: The contents of this file will only be executed if
-// you uncomment its entry in "web/static/js/app.js".
-
-// To use Phoenix channels, the first step is to import Socket
-// and connect at the socket path in "lib/my_app/endpoint.ex":
-"use strict";
-});
-
-;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');

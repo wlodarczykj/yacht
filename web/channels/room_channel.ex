@@ -10,9 +10,12 @@ defmodule Yacht.RoomChannel do
   end
 
   def handle_in("drawline", %{"from" => %{"x" => fromX, "y" => fromY}, "to" => %{"x" => toX, "y" => toY}}, socket) do
-    broadcast! socket, "drawLine", %{"from"=> %{"x" => fromX, "y" => fromY}, "to" => %{"x" => toX, "y" => toY}}
+    broadcast! socket, "drawline", %{"from"=> %{"x" => fromX, "y" => fromY}, "to" => %{"x" => toX, "y" => toY}}
+    {:noreply, socket}
+  end
 
-
+  def handle_in("clear", %{}, socket) do
+    broadcast! socket, "clear", %{}
     {:noreply, socket}
   end
 end

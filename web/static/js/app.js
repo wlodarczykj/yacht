@@ -1,6 +1,10 @@
 import "phoenix_html"
 import {Socket} from "phoenix"
 
+function clearCanvas() {
+  canvas.width = canvas.width;
+}
+
 // Initialize Socket.
 let socket = new Socket("/socket", {params: {token: window.userToken}});
 
@@ -19,13 +23,16 @@ var ctx = canvas.getContext("2d");
 ctx.strokeStyle = "#222222";
 ctx.lineWidth = 2;
 
-window.onload = function() {
-  channel.on("drawLine", payload => {
-      ctx.moveTo(payload.from.x, payload.from.y);
-      ctx.lineTo(payload.to.x, payload.to.y);
-      ctx.stroke();
-  });
-};
+channel.on("drawline", payload => {
+    ctx.moveTo(payload.from.x, payload.from.y);
+    ctx.lineTo(payload.to.x, payload.to.y);
+    ctx.stroke();
+});
+
+channel.on("clear", payload => {
+  console.log("Clearing canvas.");
+  clearCanvas();
+});
 
 (function() {
 
@@ -43,6 +50,7 @@ window.onload = function() {
 	// Set up the UI
 	var clearBtn = document.getElementById("clearBtn");
 	clearBtn.addEventListener("click", function (e) {
+    channel.push("clear", { });
 		clearCanvas();
 	}, false);
 
@@ -140,10 +148,6 @@ window.onload = function() {
 			ctx.stroke();
 			lastPos = mousePos;
 		}
-	}
-
-	function clearCanvas() {
-		canvas.width = canvas.width;
 	}
 
 	// Allow for animation
