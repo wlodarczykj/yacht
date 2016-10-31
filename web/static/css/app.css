@@ -1,0 +1,10 @@
+/* This file is for your main application css. */
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+#collab-canvas {
+  border: 2px solid #CCCCCC;
+  border-radius: 5px;
+  cursor: crosshair;
+}
