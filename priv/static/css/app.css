@@ -45,7 +45,7 @@ form.link, form.button {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    max-width: 730px;
+    max-width: 2800px;
   }
 }
 .container-narrow > hr {
@@ -80,6 +80,7 @@ form.link, form.button {
     border-bottom: 0;
   }
 }
+
 /* This file is for your main application css. */
 body {
   padding-top: 20px;
@@ -88,7 +89,12 @@ body {
 #collab-canvas {
   border: 2px solid #CCCCCC;
   border-radius: 5px;
-  cursor: crosshair;
+  cursor: default;
+}
+
+.container {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 

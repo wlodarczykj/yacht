@@ -1468,10 +1468,6 @@ require("phoenix_html");
 
 var _phoenix = require("phoenix");
 
-function clearCanvas() {
-	canvas.width = canvas.width;
-}
-
 // Initialize Socket.
 var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
 
@@ -1486,11 +1482,19 @@ channel.join().receive("ok", function (resp) {
 	console.log("Unable to join", resp);
 });
 
-// Set up the canvas
-var canvas = document.getElementById("collab-canvas");
-var ctx = canvas.getContext("2d");
+// Set up the Collaboration Layer
+var collabCanvas = document.getElementById("collab-canvas");
+var ctx = collabCanvas.getContext("2d");
 ctx.strokeStyle = "#222222";
 ctx.lineWidth = 2;
+
+function clearCanvas() {
+	collabCanvas.width = collabCanvas.width;
+}
+
+// Set up the Mouse Layer
+var mouseCanvas = document.getElementById("mouse-canvas");
+var mouseCtx = mouseCanvas.getContext("2d");
 
 channel.on("drawline", function (payload) {
 	ctx.moveTo(payload.from.x, payload.from.y);
@@ -1501,6 +1505,13 @@ channel.on("drawline", function (payload) {
 channel.on("clear", function (payload) {
 	console.log("Clearing canvas.");
 	clearCanvas();
+});
+
+channel.on("mousemove", function (payload) {
+	var img = document.getElementById("cursor");
+	img.display = "inline";
+	mouseCanvas.width = mouseCanvas.width;
+	mouseCtx.drawImage(img, payload.position.x, payload.position.y);
 });
 
 (function () {
@@ -1522,20 +1533,26 @@ channel.on("clear", function (payload) {
 	var drawing = false;
 	var mousePos = { x: 0, y: 0 };
 	var lastPos = mousePos;
-	canvas.addEventListener("mousedown", function (e) {
+	collabCanvas.addEventListener("mousedown", function (e) {
 		drawing = true;
-		lastPos = getMousePos(canvas, e);
+		lastPos = getMousePos(collabCanvas, e);
 	}, false);
-	canvas.addEventListener("mouseup", function (e) {
+	collabCanvas.addEventListener("mouseup", function (e) {
 		drawing = false;
 	}, false);
-	canvas.addEventListener("mousemove", function (e) {
-		mousePos = getMousePos(canvas, e);
+	collabCanvas.addEventListener("mousemove", function (e) {
+		mousePos = getMousePos(collabCanvas, e);
+		channel.push("mousemove", {
+			position: {
+				x: mousePos.x,
+				y: mousePos.y
+			}
+		});
 	}, false);
 
 	// Set up touch events for mobile, etc
-	canvas.addEventListener("touchstart", function (e) {
-		mousePos = getTouchPos(canvas, e);
+	collabCanvas.addEventListener("touchstart", function (e) {
+		mousePos = getTouchPos(collabCanvas, e);
 		var touch = e.touches[0];
 		var mouseEvent = new MouseEvent("mousedown", {
 			clientX: touch.clientX,
@@ -1543,11 +1560,11 @@ channel.on("clear", function (payload) {
 		});
 		canvas.dispatchEvent(mouseEvent);
 	}, false);
-	canvas.addEventListener("touchend", function (e) {
+	collabCanvas.addEventListener("touchend", function (e) {
 		var mouseEvent = new MouseEvent("mouseup", {});
 		canvas.dispatchEvent(mouseEvent);
 	}, false);
-	canvas.addEventListener("touchmove", function (e) {
+	collabCanvas.addEventListener("touchmove", function (e) {
 		var touch = e.touches[0];
 		var mouseEvent = new MouseEvent("mousemove", {
 			clientX: touch.clientX,

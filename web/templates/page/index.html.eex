@@ -15,6 +15,7 @@
   </head>
   <title>YACHT</title>
   <body>
+    <img id="cursor" src="/images/mousecursor.jpg">
   	<!-- Content -->
   	<div class="container">
   		<div class="row">
@@ -22,17 +23,18 @@
   				<h3>Try Drawing Below!</h3>
   			</div>
   		</div>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary" id="clearBtn">Clear Screen</button>
+        </div>
+      </div>
   		<div class="row">
   			<div class="col-md-12">
-  		 		<canvas id="collab-canvas" width="750" height="600">
-  		 			Browser not supported
-  		 		</canvas>
+          <canvas id="collab-canvas" width="1000px" height="1000px"
+            style="position: absolute; left: 0; top: 10px; z-index: 1;"></canvas>
+          <canvas id="mouse-canvas" width="1000px" height="1000px"
+            style="position: absolute; left: 0; top: 10px; z-index: 0;"></canvas>
   		 	</div>
-  		</div>
-  		<div class="row">
-  			<div class="col-md-12">
-  				<button class="btn btn-primary" id="clearBtn">Clear Screen</button>
-  			</div>
   		</div>
   		<br/>
   	<!-- Scripts -->
