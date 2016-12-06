@@ -1474,8 +1474,8 @@ var cursorStates = {};
 
 $(document).ready(function () {
 	if (!currUser) {
-		currUser = prompt("Please enter your username", "Anonymous");
-		//     cursorStates[currUser] = { "x" : 0, "y" : 0 }
+		var baseName = "Anon" + Math.floor(Math.random() * 100);
+		currUser = prompt("Please enter your username", baseName);
 		console.log(cursorStates[currUser]);
 	}
 });
@@ -1553,14 +1553,14 @@ channel.on("mousemove", function (payload) {
 	var drawing = false;
 	var mousePos = { x: 0, y: 0 };
 	var lastPos = mousePos;
-	collabCanvas.addEventListener("mousedown", function (e) {
+	mouseCanvas.addEventListener("mousedown", function (e) {
 		drawing = true;
 		lastPos = getMousePos(collabCanvas, e);
 	}, false);
-	collabCanvas.addEventListener("mouseup", function (e) {
+	mouseCanvas.addEventListener("mouseup", function (e) {
 		drawing = false;
 	}, false);
-	collabCanvas.addEventListener("mousemove", function (e) {
+	mouseCanvas.addEventListener("mousemove", function (e) {
 		mousePos = getMousePos(collabCanvas, e);
 		channel.push("mousemove", {
 			"name": currUser,
