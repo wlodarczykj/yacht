@@ -30,9 +30,9 @@
       </div>
   		<div class="row">
   			<div class="col-md-12">
-          <canvas id="collab-canvas" width="1000px" height="1000px"
+          <canvas id="collab-canvas" width="1000px" height="600px"
             style="position: absolute; left: 0; top: 10px; z-index: 1;"></canvas>
-          <canvas id="mouse-canvas" width="1000px" height="1000px"
+          <canvas id="mouse-canvas" width="1000px" height="600px"
             style="position: absolute; left: 0; top: 10px; z-index: 0;"></canvas>
   		 	</div>
   		</div>
