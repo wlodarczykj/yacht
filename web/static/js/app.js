@@ -1,18 +1,18 @@
 import "phoenix_html"
 import {Socket} from "phoenix"
 
-var otherUsers = [];
 var currUser = "";
+//We'll save the state of all cursors in the json below.
+var cursorStates = {};
 
 $(document).ready(function(){
    if(!currUser)
    {
      currUser = prompt("Please enter your username", "Anonymous");
-     console.log(currUser);
+//     cursorStates[currUser] = { "x" : 0, "y" : 0 }
+     console.log(cursorStates[currUser]);
    }
 });
-
-
 
 // Initialize Socket.
 let socket = new Socket("/socket", {params: {token: window.userToken}});
@@ -55,7 +55,16 @@ channel.on("mousemove", payload => {
   var img = document.getElementById("cursor");
   img.display="inline";
   mouseCanvas.width = mouseCanvas.width;
-  mouseCtx.drawImage(img, payload.position.x, payload.position.y);
+  if(payload.name != currUser)
+  {
+    cursorStates[payload.name] = {"x" : payload.position.x, "y" :  payload.position.y}
+  }
+
+  //Iterate through every cursor position and draw them all back. This may be slow...
+  var cursorKeys = Object.keys(cursorStates);
+  cursorKeys.forEach(function(currKey){
+    mouseCtx.drawImage(img, cursorStates[currKey].x, cursorStates[currKey].y);
+  });
 });
 
 (function() {
@@ -92,9 +101,10 @@ channel.on("mousemove", payload => {
 	collabCanvas.addEventListener("mousemove", function (e) {
 		mousePos = getMousePos(collabCanvas, e);
     channel.push("mousemove", {
-      position : {
-        x : mousePos.x,
-        y : mousePos.y
+      "name": currUser,
+      "position" : {
+        "x" : mousePos.x,
+        "y" : mousePos.y
       }
     });
 	}, false);

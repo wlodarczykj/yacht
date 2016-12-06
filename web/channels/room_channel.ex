@@ -19,8 +19,8 @@ defmodule Yacht.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("mousemove", %{"position" => %{"x" => x, "y" => y}}, socket) do
-    broadcast! socket, "mousemove", %{"position" => %{"x" => x, "y" => y}}
+  def handle_in("mousemove", %{"name" => username, "position" => %{"x" => x, "y" => y}}, socket) do
+    broadcast! socket, "mousemove", %{"name" => username, "position" => %{"x" => x, "y" => y}}
     {:noreply, socket}
   end
 end
