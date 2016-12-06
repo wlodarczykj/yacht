@@ -1468,6 +1468,16 @@ require("phoenix_html");
 
 var _phoenix = require("phoenix");
 
+var otherUsers = [];
+var currUser = "";
+
+$(document).ready(function () {
+	if (!currUser) {
+		currUser = prompt("Please enter your username", "Anonymous");
+		console.log(currUser);
+	}
+});
+
 // Initialize Socket.
 var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
 

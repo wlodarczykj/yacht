@@ -1,6 +1,19 @@
 import "phoenix_html"
 import {Socket} from "phoenix"
 
+var otherUsers = [];
+var currUser = "";
+
+$(document).ready(function(){
+   if(!currUser)
+   {
+     currUser = prompt("Please enter your username", "Anonymous");
+     console.log(currUser);
+   }
+});
+
+
+
 // Initialize Socket.
 let socket = new Socket("/socket", {params: {token: window.userToken}});
 
