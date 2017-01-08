@@ -15,7 +15,7 @@
   </head>
   <title>YACHT</title>
   <body>
-    <img id="cursor" src="/images/mousecursor.jpg">
+    <img id="cursor" src="/images/mousecursor.jpg" style="visibility:hidden;">
   	<!-- Content -->
   	<div class="container">
   		<div class="row">
