@@ -10,6 +10,7 @@
   	<title>YACHT</title>
   	<!-- Styles -->
   	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   	<style>
   	</style>
   </head>
@@ -17,7 +18,7 @@
   <body>
     <img id="cursor" src="/images/mousecursor.jpg" style="visibility:hidden;">
   	<!-- Content -->
-  	<div class="container">
+  	<div class="container fill">
   		<div class="row">
   			<div class="col-md-12">
   				<h3>Try Drawing Below!</h3>
@@ -28,19 +29,34 @@
           <button class="btn btn-primary" id="clearBtn">Clear Screen</button>
         </div>
       </div>
-  		<div class="row">
-  			<div class="col-md-12">
-          <canvas id="collab-canvas" width="1000px" height="600px"
+  		<div class="row draw-area">
+  			<div class="col-md-1" width="1050px" height="600px">
+          <canvas id="collab-canvas" width="1050px" height="600px"
             style="position: absolute; left: 0; top: 10px; z-index: 0;"></canvas>
-          <canvas id="mouse-canvas" width="1000px" height="600px"
+          <canvas id="mouse-canvas" width="1050px" height="600px"
             style="position: absolute; left: 0; top: 10px; z-index: 1;"></canvas>
   		 	</div>
   		</div>
+
   		<br/>
+      <div class="row">
+        <div class="col-md-11">
+          <table id="userTable" class="table-bordered"  width="100%">
+            <tr>
+              <th>
+                Username
+              </th>
+              <th>
+                Time Joined
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
   	<!-- Scripts -->
   	<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
   	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-  	<!--<script src="https://code.angularjs.org/snapshot/angular.min.js"></script>-->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+  	<!--<script src="https://code.angularjs.org/snapshot/angular.min.js"></script>-->
   </body>
 </html>
