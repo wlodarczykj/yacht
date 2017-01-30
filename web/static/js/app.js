@@ -1,4 +1,5 @@
 import "./setup.js"
+import "./roomcontroller.js"
 import "./socket.js"
 
 $(document).ready(function(){
