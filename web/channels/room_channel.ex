@@ -23,4 +23,10 @@ defmodule Yacht.RoomChannel do
     broadcast! socket, "mousemove", %{"name" => username, "position" => %{"x" => x, "y" => y}}
     {:noreply, socket}
   end
+
+  def handle_in("userJoined", %{"username" => username}, socket) do
+    user = Repo.get!(User)
+    broadcast! socket, "userJoined", %{"user" => user}
+    {:noreply, socket}
+  end
 end

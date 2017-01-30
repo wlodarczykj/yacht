@@ -29,7 +29,7 @@
           <input type="text" class="form-control" id="username" placeholder="Enter Username"/>
         </div>
         <div>
-          <button class="btn btn-primary" id="enterUser">Accept Username</button>
+          <button class="btn btn-primary" id="enterUser">Change Username</button>
         </div>
       </div>
       <br/>

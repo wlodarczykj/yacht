@@ -44,3 +44,7 @@ channel.on("mousemove", payload => {
     mouseCtx.drawImage(img, cursorStates[currKey].x, cursorStates[currKey].y);
   });
 });
+
+channel.on("userJoined", payload =>{
+  console.log(payload);
+});

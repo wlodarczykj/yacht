@@ -11,10 +11,6 @@ $(document).ready(function(){
    }
 });
 
-function clearCanvas() {
-  collabCanvas.width = collabCanvas.width;
-}
-
 (function() {
 
 	// Get a regular interval for drawing to the screen
@@ -34,6 +30,11 @@ function clearCanvas() {
     channel.push("clear", { });
 		clearCanvas();
 	}, false);
+
+  var changeUserBtn = document.getElementById("enterUser");
+  changeUserBtn.addEventListener("click", function (e) {
+      channel.push("userJoined", { });
+  }, false);
 
   //Drawing events for desktop
 	mouseCanvas.addEventListener("mousedown", function (e) {

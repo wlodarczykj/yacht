@@ -1463,17 +1463,50 @@ window.addEventListener('click', function (event) {
 });
 require.register("Projects/yacht/web/static/js/setup.js", function(exports, require, module) {
 "use strict";
+
+/*====================================================================
+ *
+ * This file is used to setup all the necessary tools the other scripts need.
+ *
+ =====================================================================*/
+
+//Current username
+window.currUser = "";
+//Used to figure out how to draw the other user's mouse pointers to screen.
+window.cursorStates = {};
+// Drawing variables.
+window.drawing = false;
+window.mousePos = { x: 0, y: 0 };
+window.lastPos = mousePos;
+
+// Set up the Mouse Layer
+window.mouseCanvas = document.getElementById("mouse-canvas");
+window.mouseCtx = mouseCanvas.getContext("2d");
+
+// Set up the Drawing Layer
+window.collabCanvas = document.getElementById("collab-canvas");
+window.ctx = collabCanvas.getContext("2d");
+ctx.strokeStyle = "#222222";
+ctx.lineWidth = 2;
 });
 
-;require.register("Projects/yacht/web/static/js/socket.js", function(exports, require, module) {
+require.register("Projects/yacht/web/static/js/socket.js", function(exports, require, module) {
 "use strict";
 
+require("phoenix_html");
+
+var _phoenix = require("phoenix");
+
+function clearCanvas() {
+  collabCanvas.width = collabCanvas.width;
+}
+
 // Initialize Socket.
-var socket = new Socket("/socket", { params: { token: window.userToken } });
+var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
 
 //Connect socket.
 socket.connect();
-var channel = socket.channel("room:lobby", {});
+window.channel = socket.channel("room:lobby", {});
 
 channel.join().receive("ok", function (resp) {
   console.log("Joined successfully", resp);
@@ -1481,9 +1514,8 @@ channel.join().receive("ok", function (resp) {
   console.log("Unable to join", resp);
 });
 
-var collabCanvas = document.getElementById("collab-canvas");
-var ctx = collabCanvas.getContext("2d");
-
+//Socket events
+//==========================
 channel.on("drawline", function (payload) {
   ctx.moveTo(payload.from.x, payload.from.y);
   ctx.lineTo(payload.to.x, payload.to.y);
@@ -1527,10 +1559,6 @@ $(document).ready(function () {
 	}
 });
 
-function clearCanvas() {
-	collabCanvas.width = collabCanvas.width;
-}
-
 (function () {
 
 	// Get a regular interval for drawing to the screen
@@ -1544,6 +1572,11 @@ function clearCanvas() {
 	clearBtn.addEventListener("click", function (e) {
 		channel.push("clear", {});
 		clearCanvas();
+	}, false);
+
+	var changeUserBtn = document.getElementById("enterUser");
+	changeUserBtn.addEventListener("click", function (e) {
+		channel.push("userJoined", {});
 	}, false);
 
 	//Drawing events for desktop
@@ -1732,6 +1765,10 @@ channel.on("mousemove", function (payload) {
   cursorKeys.forEach(function (currKey) {
     mouseCtx.drawImage(img, cursorStates[currKey].x, cursorStates[currKey].y);
   });
+});
+
+channel.on("userJoined", function (payload) {
+  console.log(payload);
 });
 });
 
