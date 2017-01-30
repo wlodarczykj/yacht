@@ -4,6 +4,11 @@
  *
  =====================================================================*/
 
+$(function() {
+  $('#colorSelector').spectrum({
+    color: "#f00"
+  });
+});
 // Setup Angular
 // Define the `phonecatApp` module
 window.yachtApp = angular.module('yachtApp', []);

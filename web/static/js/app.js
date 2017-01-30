@@ -1,8 +1,6 @@
 import "./setup.js"
 import "./roomcontroller.js"
 import "./socket.js"
-//Taken from http://jscolor.com/
-import "./jscolor.js"
 
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
@@ -25,11 +23,17 @@ $(document).ready(function(){
    }
 });
 
-$( "#colorSelector" ).change(function() {
-  var colorValue = "#" + this.value
-  ctx.strokeStyle = colorValue
-  console.log("Changing stroke color to " + colorValue);
+$(function() {
+  $('#colorSelector').spectrum({
+    color: "#f00",
+    change: function(color) {
+      var colorValue = color.toHexString();
+      ctx.strokeStyle = colorValue
+      console.log("Changing stroke color to " + colorValue);
+    }
+  });
 });
+
 
 document.getElementById('downloadBtn').addEventListener('click', function() {
     downloadCanvas(this, 'canvas', 'test.png');
