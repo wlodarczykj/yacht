@@ -1,71 +1,19 @@
-import "phoenix_html"
-import {Socket} from "phoenix"
-
-var currUser = "";
-//We'll save the state of all cursors in the json below.
-var cursorStates = {};
+import "./setup.js"
+import "./socket.js"
 
 $(document).ready(function(){
    if(!currUser)
    {
      var baseName = "Anon" + Math.floor(Math.random() * 100);
-     currUser = prompt("Please enter your username", baseName);
+     currUser = baseName;
+     $("#username").val(baseName);
      console.log(cursorStates[currUser]);
    }
 });
 
-// Initialize Socket.
-let socket = new Socket("/socket", {params: {token: window.userToken}});
-
-//Connect socket.
-socket.connect();
-
-let channel = socket.channel("room:lobby", {});
-
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) });
-
-// Set up the Collaboration Layer
-var collabCanvas = document.getElementById("collab-canvas");
-var ctx = collabCanvas.getContext("2d");
-ctx.strokeStyle = "#222222";
-ctx.lineWidth = 2;
-
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
 }
-
-// Set up the Mouse Layer
-var mouseCanvas = document.getElementById("mouse-canvas");
-var mouseCtx = mouseCanvas.getContext("2d");
-
-channel.on("drawline", payload => {
-    ctx.moveTo(payload.from.x, payload.from.y);
-    ctx.lineTo(payload.to.x, payload.to.y);
-    ctx.stroke();
-});
-
-channel.on("clear", payload => {
-  console.log("Clearing canvas.");
-  clearCanvas();
-});
-
-channel.on("mousemove", payload => {
-  var img = document.getElementById("cursor");
-  img.display="inline";
-  mouseCanvas.width = mouseCanvas.width;
-  if(payload.name != currUser)
-  {
-    cursorStates[payload.name] = {"x" : payload.position.x, "y" :  payload.position.y}
-  }
-
-  //Iterate through every cursor position and draw them all back. This may be slow...
-  var cursorKeys = Object.keys(cursorStates);
-  cursorKeys.forEach(function(currKey){
-    mouseCtx.drawImage(img, cursorStates[currKey].x, cursorStates[currKey].y);
-  });
-});
 
 (function() {
 
@@ -87,10 +35,7 @@ channel.on("mousemove", payload => {
 		clearCanvas();
 	}, false);
 
-	// Set up mouse events for drawing
-	var drawing = false;
-	var mousePos = { x:0, y:0 };
-	var lastPos = mousePos;
+  //Drawing events for desktop
 	mouseCanvas.addEventListener("mousedown", function (e) {
 		drawing = true;
 		lastPos = getMousePos(collabCanvas, e);
@@ -109,7 +54,7 @@ channel.on("mousemove", payload => {
     });
 	}, false);
 
-	// Set up touch events for mobile, etc
+	// Drawing events for Mobile
 	collabCanvas.addEventListener("touchstart", function (e) {
 		mousePos = getTouchPos(collabCanvas, e);
 		var touch = e.touches[0];

@@ -16,7 +16,7 @@
   </head>
   <title>YACHT</title>
   <body>
-    <img id="cursor" src="/images/mousecursor.jpg" style="visibility:hidden;">
+
   	<!-- Content -->
   	<div class="container fill">
   		<div class="row">
@@ -25,10 +25,21 @@
   			</div>
   		</div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="username" placeholder="Enter Username"/>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="enterUser">Accept Username</button>
+        </div>
+      </div>
+      <br/>
+
+      <div class="row">
+        <div class="col-md-2">
           <button class="btn btn-primary" id="clearBtn">Clear Screen</button>
         </div>
       </div>
+
   		<div class="row draw-area">
   			<div class="col-md-1" width="1050px" height="600px">
           <canvas id="collab-canvas" width="1050px" height="600px"
@@ -53,6 +64,7 @@
           </table>
         </div>
       </div>
+      <img id="cursor" src="/images/mousecursor.jpg" style="visibility:hidden;">
   	<!-- Scripts -->
   	<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
   	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
