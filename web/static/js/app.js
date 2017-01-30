@@ -1,9 +1,16 @@
 import "./setup.js"
 import "./roomcontroller.js"
 import "./socket.js"
+//Taken from http://jscolor.com/
+import "./jscolor.js"
 
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
+}
+
+function downloadCanvas(link, canvasId, filename) {
+  link.href = collabCanvas.toDataURL();
+  link.download = filename;
 }
 
 $(document).ready(function(){
@@ -18,10 +25,11 @@ $(document).ready(function(){
    }
 });
 
-function downloadCanvas(link, canvasId, filename) {
-    link.href = collabCanvas.toDataURL();
-    link.download = filename;
-}
+$( "#colorSelector" ).change(function() {
+  var colorValue = "#" + this.value
+  ctx.strokeStyle = colorValue
+  console.log("Changing stroke color to " + colorValue);
+});
 
 document.getElementById('downloadBtn').addEventListener('click', function() {
     downloadCanvas(this, 'canvas', 'test.png');
