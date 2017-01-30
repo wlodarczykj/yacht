@@ -2,6 +2,10 @@ import "./setup.js"
 import "./roomcontroller.js"
 import "./socket.js"
 
+function clearCanvas() {
+  collabCanvas.width = collabCanvas.width;
+}
+
 $(document).ready(function(){
    if(!currUser)
    {

@@ -15,7 +15,7 @@
   	</style>
   </head>
   <title>YACHT</title>
-  <body ng-controller="RoomController">
+  <body ng-controller="RoomController" id="mainBody">
 
   	<!-- Content -->
   	<div class="container fill">
@@ -58,12 +58,16 @@
                 Username
               </th>
               <th>
+                Color
+              </th>
+              <th>
                 Time Joined
               </th>
             </tr>
             <tr ng-repeat="user in users">
               <td>{{user.name}}</td>
               <td>{{user.color}}</td>
+              <td>{{user.inserted_at}}</td>
             </tr>
           </table>
         </div>

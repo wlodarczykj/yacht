@@ -1556,6 +1556,10 @@ require("./roomcontroller.js");
 
 require("./socket.js");
 
+function clearCanvas() {
+	collabCanvas.width = collabCanvas.width;
+}
+
 $(document).ready(function () {
 	if (!currUser) {
 		var baseName = "Anon" + Math.floor(Math.random() * 100);
@@ -1693,19 +1697,14 @@ $(document).ready(function () {
 });
 
 require.register("web/static/js/roomcontroller.js", function(exports, require, module) {
-'use strict';
+"use strict";
 
 yachtApp.controller('RoomController', function RoomController($scope) {
-  $scope.users = [{
-    name: 'Bilbo Baggins',
-    color: '100,100,100'
-  }, {
-    name: 'Mike Wazawski',
-    color: '150,0,150'
-  }, {
-    name: 'Samus Aran',
-    color: '255,0,0'
-  }];
+  $.getJSON("/users", function (data) {
+    console.log(data.users);
+    $scope.users = data.users;
+    $scope.$apply();
+  });
 });
 });
 
