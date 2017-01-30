@@ -1586,8 +1586,16 @@ $(document).ready(function () {
 	}
 });
 
-(function () {
+function downloadCanvas(link, canvasId, filename) {
+	link.href = collabCanvas.toDataURL();
+	link.download = filename;
+}
 
+document.getElementById('downloadBtn').addEventListener('click', function () {
+	downloadCanvas(this, 'canvas', 'test.png');
+}, false);
+
+(function () {
 	// Get a regular interval for drawing to the screen
 	window.requestAnimFrame = function (callback) {
 		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimaitonFrame || function (callback) {
