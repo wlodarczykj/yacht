@@ -12,7 +12,9 @@ $(document).ready(function(){
      var baseName = "Anon" + Math.floor(Math.random() * 100);
      currUser = baseName;
      $("#username").val(baseName);
-     console.log(cursorStates[currUser]);
+     channel.push("userJoined", {
+       "name": currUser
+     });
    }
 });
 

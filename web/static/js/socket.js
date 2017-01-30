@@ -1,12 +1,25 @@
 import "phoenix_html"
 import {Socket} from "phoenix"
 
+// Initialize Socket.
+let socket = new Socket("/socket", {params: {token: window.userToken}});
+
+//Functions
+//=============================================
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
 }
 
-// Initialize Socket.
-let socket = new Socket("/socket", {params: {token: window.userToken}});
+function reloadUserTable() {
+  var scope = $('#mainBody').scope();
+  $.getJSON("/users", function(data){
+    scope.users = data.users;
+    scope.$apply();
+  });
+}
+
+//MAINLINE code
+//==============================================
 
 //Connect socket.
 socket.connect();
@@ -46,5 +59,7 @@ channel.on("mousemove", payload => {
 });
 
 channel.on("userJoined", payload =>{
-  console.log(payload);
+  console.log("Reloading User Table.");
+  //Not sure why it only works if I give it a timeout, prolly an async somewhere.
+  setTimeout(reloadUserTable, 100);
 });

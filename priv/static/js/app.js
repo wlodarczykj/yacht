@@ -1463,9 +1463,17 @@ window.addEventListener('click', function (event) {
 });
 require.register("Projects/yacht/web/static/js/roomcontroller.js", function(exports, require, module) {
 "use strict";
+
+yachtApp.controller('RoomController', function RoomController($scope) {
+  $.getJSON("/users", function (data) {
+    console.log(data.users);
+    $scope.users = data.users;
+    $scope.$apply();
+  });
+});
 });
 
-;require.register("Projects/yacht/web/static/js/setup.js", function(exports, require, module) {
+require.register("Projects/yacht/web/static/js/setup.js", function(exports, require, module) {
 "use strict";
 
 /*====================================================================
@@ -1474,20 +1482,23 @@ require.register("Projects/yacht/web/static/js/roomcontroller.js", function(expo
  *
  =====================================================================*/
 
-//Current username
+// Setup Angular
+// Define the `phonecatApp` module
+window.yachtApp = angular.module('yachtApp', []);
+
+//Setup Canvas "stuff"
+//========================
 window.currUser = "";
-//Used to figure out how to draw the other user's mouse pointers to screen.
 window.cursorStates = {};
-// Drawing variables.
 window.drawing = false;
 window.mousePos = { x: 0, y: 0 };
 window.lastPos = mousePos;
 
-// Set up the Mouse Layer
+// Mouse Layer
 window.mouseCanvas = document.getElementById("mouse-canvas");
 window.mouseCtx = mouseCanvas.getContext("2d");
 
-// Set up the Drawing Layer
+// Drawing Layer
 window.collabCanvas = document.getElementById("collab-canvas");
 window.ctx = collabCanvas.getContext("2d");
 ctx.strokeStyle = "#222222";
@@ -1545,6 +1556,10 @@ channel.on("mousemove", function (payload) {
     mouseCtx.drawImage(img, cursorStates[currKey].x, cursorStates[currKey].y);
   });
 });
+
+channel.on("userJoined", function (payload) {
+  console.log(payload);
+});
 });
 
 require.register("web/static/js/app.js", function(exports, require, module) {
@@ -1565,7 +1580,9 @@ $(document).ready(function () {
 		var baseName = "Anon" + Math.floor(Math.random() * 100);
 		currUser = baseName;
 		$("#username").val(baseName);
-		console.log(cursorStates[currUser]);
+		channel.push("userJoined", {
+			"name": currUser
+		});
 	}
 });
 
@@ -1701,7 +1718,6 @@ require.register("web/static/js/roomcontroller.js", function(exports, require, m
 
 yachtApp.controller('RoomController', function RoomController($scope) {
   $.getJSON("/users", function (data) {
-    console.log(data.users);
     $scope.users = data.users;
     $scope.$apply();
   });
@@ -1747,12 +1763,25 @@ require("phoenix_html");
 
 var _phoenix = require("phoenix");
 
+// Initialize Socket.
+var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
+
+//Functions
+//=============================================
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
 }
 
-// Initialize Socket.
-var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
+function reloadUserTable() {
+  var scope = $('#mainBody').scope();
+  $.getJSON("/users", function (data) {
+    scope.users = data.users;
+    scope.$apply();
+  });
+}
+
+//MAINLINE code
+//==============================================
 
 //Connect socket.
 socket.connect();
@@ -1793,7 +1822,9 @@ channel.on("mousemove", function (payload) {
 });
 
 channel.on("userJoined", function (payload) {
-  console.log(payload);
+  console.log("Reloading User Table.");
+  //Not sure why it only works if I give it a timeout, prolly an async somewhere.
+  setTimeout(reloadUserTable, 100);
 });
 });
 

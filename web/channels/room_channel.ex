@@ -1,5 +1,6 @@
 defmodule Yacht.RoomChannel do
   use Phoenix.Channel
+  import Yacht.ChannelHelper
 
   def join("room:lobby", _message, socket) do
     {:ok, socket}
@@ -24,9 +25,9 @@ defmodule Yacht.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("userJoined", %{"username" => username}, socket) do
-    user = Repo.get!(User)
-    broadcast! socket, "userJoined", %{"user" => user}
+  def handle_in("userJoined", %{"name" => username}, socket) do
+    insert_user username
+    broadcast! socket, "userJoined", %{}
     {:noreply, socket}
   end
 end
