@@ -10,7 +10,6 @@ $(function() {
   });
 });
 // Setup Angular
-// Define the `phonecatApp` module
 window.yachtApp = angular.module('yachtApp', []);
 
 //Setup Canvas "stuff"

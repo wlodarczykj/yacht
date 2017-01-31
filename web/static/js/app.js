@@ -28,15 +28,14 @@ $(function() {
     color: "#f00",
     change: function(color) {
       var colorValue = color.toHexString();
-      ctx.strokeStyle = colorValue
+      drawColor = colorValue
       console.log("Changing stroke color to " + colorValue);
     }
   });
 });
 
-
 document.getElementById('downloadBtn').addEventListener('click', function() {
-    downloadCanvas(this, 'canvas', 'test.png');
+    downloadCanvas(this, 'canvas', 'CanvasImage.png');
 }, false);
 
 (function() {
@@ -67,6 +66,7 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
 	mouseCanvas.addEventListener("mousedown", function (e) {
 		drawing = true;
 		lastPos = getMousePos(collabCanvas, e);
+
 	}, false);
 	mouseCanvas.addEventListener("mouseup", function (e) {
 		drawing = false;
@@ -156,9 +156,6 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
           }
         });
       }
-			ctx.moveTo(lastPos.x, lastPos.y);
-			ctx.lineTo(mousePos.x, mousePos.y);
-			ctx.stroke();
 			lastPos = mousePos;
 		}
 	}
