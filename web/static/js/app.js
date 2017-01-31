@@ -29,6 +29,7 @@ $(function() {
     change: function(color) {
       var colorValue = color.toHexString();
       drawColor = colorValue
+      ctx.strokeStyle = drawColor;
       console.log("Changing stroke color to " + colorValue);
     }
   });

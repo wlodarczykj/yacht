@@ -8,6 +8,8 @@ let socket = new Socket("/socket", {params: {token: window.userToken}});
 //=============================================
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
+  ctx.strokeStyle = drawColor;
+  ctx.lineWidth = 2;
 }
 
 function reloadUserTable() {
@@ -32,9 +34,11 @@ channel.join()
 //Socket events
 //==========================
 channel.on("drawline", payload => {
-    ctx.moveTo(payload.from.x, payload.from.y);
-    ctx.lineTo(payload.to.x, payload.to.y);
-    ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(payload.from.x, payload.from.y);
+  ctx.lineTo(payload.to.x, payload.to.y);
+  ctx.stroke();
+  ctx.closePath();
 });
 
 channel.on("clear", payload => {

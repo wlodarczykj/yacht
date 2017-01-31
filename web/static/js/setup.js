@@ -4,11 +4,6 @@
  *
  =====================================================================*/
 
-$(function() {
-  $('#colorSelector').spectrum({
-    color: "#f00"
-  });
-});
 // Setup Angular
 window.yachtApp = angular.module('yachtApp', []);
 
@@ -27,5 +22,6 @@ window.mouseCtx = mouseCanvas.getContext("2d");
 // Drawing Layer
 window.collabCanvas = document.getElementById("collab-canvas");
 window.ctx = collabCanvas.getContext("2d");
-ctx.strokeStyle = "#222222";
+window.drawColor = "#000000";
+ctx.strokeStyle = drawColor;
 ctx.lineWidth = 2;
