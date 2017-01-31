@@ -4,6 +4,8 @@ import "./socket.js"
 
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
+  ctx.lineWidth = 2;
+
 }
 
 function downloadCanvas(link, canvasId, filename) {
@@ -29,7 +31,6 @@ $(function() {
     change: function(color) {
       var colorValue = color.toHexString();
       drawColor = colorValue
-      ctx.strokeStyle = drawColor;
       console.log("Changing stroke color to " + colorValue);
     }
   });
@@ -154,7 +155,8 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
           to : {
             x : mousePos.x,
             y : mousePos.y
-          }
+          },
+          color: drawColor
         });
       }
 			lastPos = mousePos;

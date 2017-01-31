@@ -8,7 +8,6 @@ let socket = new Socket("/socket", {params: {token: window.userToken}});
 //=============================================
 function clearCanvas() {
   collabCanvas.width = collabCanvas.width;
-  ctx.strokeStyle = drawColor;
   ctx.lineWidth = 2;
 }
 
@@ -35,6 +34,7 @@ channel.join()
 //==========================
 channel.on("drawline", payload => {
   ctx.beginPath();
+  ctx.strokeStyle = payload.color;
   ctx.moveTo(payload.from.x, payload.from.y);
   ctx.lineTo(payload.to.x, payload.to.y);
   ctx.stroke();
